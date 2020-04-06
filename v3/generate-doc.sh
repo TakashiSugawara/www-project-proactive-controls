@@ -38,8 +38,8 @@ generate() {
     fi
 }
 
-# English
-generate "EN"
+# 日本語
+generate "JA"
 
  
 echo "Generated OWASP Top 10 Proactive Control"
