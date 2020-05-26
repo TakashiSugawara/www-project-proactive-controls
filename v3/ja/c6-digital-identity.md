@@ -7,20 +7,24 @@ order: 10
 
 ---
 
-# C6: Implement Digital Identity
+# C6: デジタルアイデンティティの実装
 
-## Description
-Digital Identity is the unique representation of a user (or other subject) as they engage in an online transaction. Authentication is the process of verifying that an individual or entity is who they claim to be. Session management is a process by which a server maintains the state of the users authentication so that the user may continue to use the system without re-authenticating. The [NIST Special Publication 800-63B: Digital Identity Guidelines (Authentication and Lifecycle Management](https://pages.nist.gov/800-63-3/sp800-63b.html) provides solid guidance on implementing digital identity, authentication and session management controls.
+## 概要
 
-Below are some recommendations for secure implementation.
+デジタルアイデンティティ(デジタルID)とは、オンライントランザクションに従事するユーザー(やその他の対象物)についての固有の表現です。認証とは、個人や実体が主張通りであるかの確認プロセスです。セッション管理とは、サーバーがユーザー認証の状態を維持することで、ユーザーが再認証なしにシステムの継続利用を可能とするプロセスです。[NIST Special Publication 800-63B: Digital Identity Guidelines (Authentication and Lifecycle Management](https://pages.nist.gov/800-63-3/sp800-63b.html) (NIST 800-63b) は、デジタルID、認証、セッション管理らの実装における確固たるガイダンスです。
 
-## Authentication Levels
-NIST 800-63b describes three levels of a authentication assurance called a authentication assurance level (AAL). AAL level 1 is reserved for lower-risk applications that do not contain PII or other private data. At AAL level 1 only single-factor authentication is required, typically through the use of a password. 
+次に安全な実装のための推奨を紹介します。
 
-### Level 1 : Passwords
-Passwords are really really important. We need policy, we need to store them securely, we need to sometimes allow users to reset them.
+## 認証レベル
 
-#### Password Requirements
+NIST 800-63bには、認証保証レベル(AAL)と呼ばれる認証保証の3つのレベルが記されています。AALレベル1では個人を特定できる情報(Personally Identifiable Information = PII)やその他のプライベート情報を含まない低リスクのアプリケーション用に予約されています。AALレベル1では、一般的にはパスワードによる単一要素認証しか要求されません。
+
+### レベル 1 : パスワード
+
+パスワードは本当に重要です。ポリシーが、安全な保管が、時にはユーザーによるリセットが、必要となります。
+
+#### パスワード要件
+
 Passwords should comply with the following requirements at the very least:
 
 * be at least 8 characters in length if multi-factor authentication (MFA) and other controls are also used. If MFA is not possible, this should be increased to at least 10 characters

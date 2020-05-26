@@ -7,55 +7,62 @@ order: 8
 
 ---
 
-# C4: Encode and Escape Data
+# C4: データのエンコードとエスケープ
 
-## Description
+## 概要
 
-**Encoding** and escaping are defensive techniques meant to stop injection attacks. Encoding (commonly called "Output Encoding") involves translating special characters into some different but equivalent form that is no longer dangerous in the target interpreter, for example translating the ``<`` character into the ``&lt;`` string when writing to an HTML page. **Escaping** involves adding a special character before the character/string to avoid it being misinterpreted, for example, adding a ``\`` character before a ``"`` (double quote) character so that it is interpreted as text and not as closing a string.
+**エンコーディング**とエスケープは、インジェクション攻撃を阻止するための防御技術です。エンコーディング(通常「外部エンコーディング」と呼ばれるもの)は、特殊な文字を出力先インタプリターにとって危険でないが、同等となる別の形に変換します。例えば、HTMLページにおいて``<``文字を``&lt;``という文字列への変換です。**エスケープ**は、文字や文字列の前に特殊な文字を追加することによって誤解を防ぎます。例えば、``"``(ダブルクォート)文字の前に``\``を追加することで、文字列の終了ではなくテキストとして理解させる事です。
 
-Output encoding is best applied **just before** the content is passed to the target interpreter. If this defense is performed too early in the processing of a request then the encoding or escaping may interfere with the use of the content in other parts of the program. For example if you HTML escape content before storing that data in the database and the UI automatically escapes that data a second time then the content will not display properly due to being double escaped.
+出力エンコーディングは、コンテンツが出力先インタープリターに渡される**直前**に適用するのが最善です。この防御策がリクエストの早い段階で適用されてしまうと、エンコーディングやエスケープがプログラムの他の箇所でのコンテンツの利用を妨げるかもしれません。例えば、データベースへの保存前にHTMLコンテンツをエスケープした際に、UIが自動的にそれを再びエスケープしてしまえば、コンテンツは二重にエスケープされ適切に表示されないでしょう。
 
-### Contextual Output Encoding
+### コンテキスト出力エンコーディング
 
-Contextual output encoding is a crucial security programming technique needed to stop XSS. This defense is performed on output, when you're building a user interface, at the last moment before untrusted data is dynamically added to HTML. The type of encoding will depend on the location (or context) in the document where data is being displayed or stored. The different types of encoding that would be used for building secure user interfaces includes HTML Entity Encoding, HTML Attribute Encoding, JavaScript Encoding, and URL Encoding.
+コンテキスト出力エンコーディングは、XSSを防ぐ為に必須の重要なセキュリティプログラミング技術です。この防御策はユーザーインターフェースの構築時に、信頼できないユーザー入力を動的にHTMLに追加する直前に、出力に対して行われます。エンコーディングの種類はデータが表示や保存される位置(コンテキスト)に依存します。安全なユーザーインターフェースの構築のために用いられるエンコーディングの種類には、HTML要素エンコーディング、HTML属性エンコーディング、JavaScriptエンコーディング、URLエンコーディング等があります。
 
-#### Java Encoding Examples
-For examples of the OWASP Java Encoder providing contextual output encoding see: [OWASP Java Encoder Project Examples](https://www.owasp.org/index.php/OWASP_Java_Encoder_Project#tab=Use_the_Java_Encoder_Project).
+#### Javaでのコンテキスト出力エンコーディング例
+
+コンテキスト出力エンドーディングを提供するOWASP Javaエンコーダーの例が、[OWASP Java Encoder Project Examples](https://www.owasp.org/index.php/OWASP_Java_Encoder_Project#tab=Use_the_Java_Encoder_Project)にあります。
 
 
-#### .NET Encoding Examples
-Starting with .NET 4.5 , the Anti-Cross Site Scripting library is part of the framework, but not enabled by default. You can specify to use AntiXssEncoder from this library as the default encoder for your entire application using the web.conf settings. When applied is important to contextual encode your output - that means to use the right function from the AntiXSSEncoder library for the appropriate location of data in document.
+#### .NETでのコンテキスト出力エンコーディング
 
-#### PHP Encoding Examples
+デフォルトでは無効ですが、.NET 4.5以降のフレームワークの一部として、アンチXSSライブラリがあります。web.confの設定を用いる事で、アプリケーションの全体に渡ってアンチXSSエンコーダーをデフォルトとして明示して利用することができます。適用する場合、ドキュメントでのデータ位置に応じてアンチXSSライブラリの正しい関数を用いてコンテキスト出力エンコードする事が重要です。
+
+#### PHPでのコンテキスト出力エンコーディング
+
 **Zend Framework 2**
 
-In Zend Framework 2 (ZF2), ``Zend\Escaper`` can be used for encoding the output. For contextual encoding examples see [Context-specific escaping with zend-escaper](https://framework.zend.com/blog/2017-05-16-zend-escaper.html).
+Zend Framework 2 (ZF2)では、``Zend\Escaper``を出力のエンコードに用います。コンテキスト出力エンコーディングの例は[Context-specific escaping with zend-escaper](https://framework.zend.com/blog/2017-05-16-zend-escaper.html)にあります。
 
-### Other Types of Encoding and Injection Defense
-Encoding/Escaping can be used to neutralize content against other forms of injection. For example, it's possible to neutralize certain special meta-characters when adding input to an operating system command. This is called "OS command escaping", "shell escaping", or similar. This defense can be used to stop "Command Injection" vulnerabilities.
+### その他のエンコーディングとインジェクション対策
 
-There are other forms of escaping that can be used to stop injection such as XML attribute escaping stopping various forms of XML and XML path injection, as well as LDAP distinguished name escaping that can be used to stop various forms of LDAP injection.
+エンコーディング/エスケーピングはその他の形のインジェクションに対してコンテンツを中和することもできます。例えば、一定の特殊なメタ文字がOSコマンドに追加入力されるのを中和する事ができます。これは「OSコマンドエスケーピング」や「シェルエスケーピング」などと呼ばれています。これは「コマンドインジェクション」脆弱性を防ぎます。
 
-### Character Encoding and Canonicalization
-Unicode Encoding is a method for storing characters with multiple bytes. Wherever input data is allowed, data can be entered using [Unicode](https://www.owasp.org/index.php/Unicode_Encoding) to disguise malicious code and permit a variety of attacks. [RFC 2279](https://tools.ietf.org/html/rfc2279) references many ways that text can be encoded.
+他のエスケーピングにも、例えばXML属性エスケーピングが様々な形のXMLインジェクションやXMLパスインジェクションを防ぐ事ができる、LDAP識別名エスケーピングが様々な形のLDAPインジェクションを防ぐ事ができるなど、インジェクションの防止となる形式があります。
 
-Canonicalization is a method in which systems convert data into a simple or standard form.  Web applications commonly use character canonicalization to ensure all content is of the same character type when stored or displayed.
+### 文字エンコーディングと平準化
 
-To be secure against canonicalization related attacks means an application should be safe when malformed Unicode and other malformed character representations are entered.
+ユニコードエンコーディングはマルチバイトでの文字符号化法です。入力が可能な箇所において[Unicode](https://www.owasp.org/index.php/Unicode_Encoding)を用いる事で悪意のあるコードを偽装し、様々な攻撃を可能とします。[RFC 2279](https://tools.ietf.org/html/rfc2279)にはテキストをエンコードする多くの方法が参照されています。
 
+平準化はシステムがデータを平易で標準的な形に変換する手法です。Webアプリケーションは一般的に、全てのコンテンツが保存時や表示時に同じ文字タイプとなる保証のために、平準化を行います。
 
-## Vulnerabilities Prevented
+悪意のあるUnicodeやその他不正な文字表現を入力されてもアプリケーションが安全であれば、平準化関連の攻撃から安全であると言えます。
+
+## 本対策で防げる脆弱性
+
 * [OWASP Top 10 2017 - A1: Injection](https://www.owasp.org/index.php/Top_10-2017_A1-Injection)
 * [OWASP Top 10 2017 - A7: Cross Site Scripting (XSS)](https://www.owasp.org/index.php/Top_10-2017_A7-Cross-Site_Scripting_(XSS))
 * [OWASP Mobile_Top_10_2014-M7 Client Side Injection](https://www.owasp.org/index.php/Mobile_Top_10_2014-M7)
 
-## References
+## 参考文献
+
 * [XSS](https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)) - General information
 * [OWASP Cheat Sheet: XSS Prevention](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet) - Stopping XSS in your web application
 * [OWASP Cheat Sheet: DOM based XSS Prevention](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet)
 * [OWASP Cheat Sheet: Injection Prevention](https://www.owasp.org/index.php/Injection_Prevention_Cheat_Sheet)
 
-## Tools
+## ツール
+
 * [OWASP Java Encoder Project](https://www.owasp.org/index.php/OWASP_Java_Encoder_Project)
 * [AntiXSSEncoder](https://docs.microsoft.com/en-us/dotnet/api/system.web.security.antixss.antixssencoder?redirectedfrom=MSDN&view=netframework-4.7.2)
 * [Zend\Escaper](https://framework.zend.com/blog/2017-05-16-zend-escaper.html) - examples of contextual encoding

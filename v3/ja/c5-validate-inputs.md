@@ -7,99 +7,112 @@ order: 9
 
 ---
 
-# C5: Validate All Inputs
+# C5: 全入力の検証
 
-## Description
-Input validation is a programming technique that ensures only properly formatted data may enter a software system component.
+## 概要
 
-### Syntax and Semantic Validity
-An application should check that data is both *syntactically* and *semantically* valid (in that order) before using it in any way (including displaying it back to the user).
+入力バリデーションとは適切にフォーマットされたデータのみがソフトウェアシステムのコンポーネントに入力されるようにするプログラミング技術です。
 
-**Syntax validity** means that the data is in the form that is expected. For example, an application may allow a user to select a four-digit "account ID" to perform some kind of operation. The application should assume the user is entering a SQL injection payload, and should check that the data entered by the user is exactly four digits in length, and consists only of numbers (in addition to utilizing proper query parameterization).
 
-**Semantic validity** includes only accepting input that is within an acceptable range for the given application functionality and context. For example, a start date must be before an end date when choosing date ranges.
+### 構文検証と意味検証
 
-### Whitelisting vs Blacklisting
-There are two general approaches to performing input syntax validation, commonly known as blacklisting and whitelisting:
+アプリケーションは、いかなる場合でも(ユーザー表示であっても)データを利用する際には、順に*構文的*にかつ*意味的*に検証しなくてはなりません。
 
-* **Blacklisting** or **blacklist validation*** attempts to check that given data does not contain "known bad" content. For example, a web application may block input that contains the exact text ``<SCRIPT>`` in order to help prevent XSS. However, this defense could be evaded with a lower case script tag or a script tag of mixed case.
-* **Whitelisting** or **whitelist** validation attempts to check that a given data matches a set of "known good" rules. For example a whitelist validation rule for a US state would be a 2-letter code that is only one of the valid US states.
+**構文検証**とは、データが期待通りの形式であることです。例えば、ある種の操作を実行するためにユーザーに4桁の数字の「アカウントID」を選ばせるアプリケーションがあるとします。ユーザーがSQLインジェクションのペイロードを入力してくることを想定し、ユーザー入力が正確に4桁の長さで、数字のみで構築されていることを確認しましょう(クエリーパラメーター化する事に加えて)。
 
-**Important**
-When building secure software, whitelisting is the recommended minimal approach. Blacklisting is prone to error and can be bypassed with various evasion techniques and can be dangerous when depended on by itself. Even though blacklisting can often be evaded it can often useful to help detect obvious attacks. So while **whitelisting** helps limit the attack surface by ensuring data is of the right syntactic and semantic validity, **blacklisting** helps detect and potentially stop obvious attacks.
+**意味検証**とは、所与のアプリケーションの機能やコンテキストでの許容範囲内の入力のみを受け付けることなどです。例えば、日付範囲の指定において、開始日が終了日より前でなくてはなりません。
 
-### Client side and Server side Validation
-Input validation must always be done on the server-side for security. While client side validation can be useful for both functional and some security purposes it can often be easily bypassed. This makes server-side validation even more fundamental to security. For example, JavaScript validation may alert the user that a particular field must consist of numbers but the server side application must validate that the submitted data only consists of numbers in the appropriate numerical range for that feature.
+### ホワイトリスト式かブラックリスト式か
 
-### Regular Expressions
-Regular expressions offer a way to check whether data matches a specific pattern. Let’s start with a basic example.
+入力の構文検証には、一般的にブラックリスト式とホワイトリスト式と知られている、2つの一般的なアプローチがあります。
 
-The following regular expression is used to define a whitelist rule to validate usernames.
+* **ブラックリスティング**あるいは**ブラックリスト検証**は、入力値に「既知の良くない」コンテンツが含まれていないかを確認しようとしまうす。例えば、WebアプリケーションにおいてXSS防止のために入力値に正に``<SCRIPT>``という文字が含まれているテキストをブロックすることです。しかしながら、小文字や大文字小文字混合のスクリプトタグを使えばこの防御策は回避されてしまいます。
+* **ホワイトリスティング**あるいは**ホワイトリスト検証**は、入力値が「既知の良い」ルールのセットにマッチするかを確認しようとします。例えば、米国州のホワイトリスト検証のルールは、有効な州の一つとして2字にコード化されたものになります。
+
+**重要な事**
+安全なアプリケーションの構築のためには、ホワイトリスト検証がお勧めの最小限のアプローチです。ブラックリスト検証はエラーしやすく、様々な回避術により迂回することができます。ブラックリスト検証がよく回避されがちである一方で、明らかな攻撃を見抜くのに役立ちます。そのため、**ホワイトリスト検証**はデータの適切な構文と意味的な妥当性を確かにすることで攻撃を制限し、**ブラックリスト検証**は明らかな攻撃を見抜き、潜在的に防止するのに役立ちます。
+
+### クライアントサイド検証とサーバーサイド検証
+
+安全のためには、入力値検証は全てサーバーサイドで実施しなくてはなりません。クライアントサイド検証は機能面からもセキュリティ目的からも有用ですが、容易に回避され得ます。ゆえに、安全のためにはサーバーサイド検証がより根本的なものとなります。例えば、JavaScriptによる検証によってユーザーにある入力欄が数字でなければならないことを警告するとしても、サーバーサイドアプリケーションは受信したデータが適切に処理可能な値域にある数字であるかを確認せねばなりません。
+
+### 正規表現
+
+正規表現によって、データがあるパターンにマッチするかを確認することができます。基礎的な例から始めます。
+
+以下の正規表現はユーザー名検証のホワイトリスト検証ルールを定義するために用いられているものです。
 
     ^[a-z0-9_]{3,16}$
 
-This regular expression allows only lowercase letters, numbers and the underscore character. The username is also restricted to a length of 3 and 16 characters.
+この正規表現は英数小文字とアンダースコアのみを許容します。またユーザー名は3から16文字の長さに制限されます。
 
-**Caution: Potential for Denial of Service**
+**警告: サービス拒否の可能性**
 
-Care should be exercised when creating regular expressions. Poorly designed expressions may result in potential denial of service conditions (aka [ReDoS](https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS) ). Various tools can test to verify that regular expressions are not vulnerable to ReDoS.
+正規表現の作成時には注意が必要です。不適切な設計の表現はサービス拒否状態(別名[ReDoS](https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS))の可能性となり得ます。正規表現がReDoSに対して脆弱でないことを確認する試験には、様々なツールを使えます。
 
-**Caution: Complexity**
+**警告: 複雑性**
 
-Regular expressions are just one way to accomplish validation. Regular expressions can be difficult to maintain or understand for some developers. Other validation alternatives involve writing validation methods programmatically which can be easier to maintain for some developers.
+正規表現は検証を実施するための一つの方法に過ぎません。正規表現をメンテナンスしたり理解したりするのが難しい開発者はいます。他の検証方法としてプログラムとして検証メソッドを書けば、そのような開発者にとっても容易にメンテナンスできるものとなります。
 
+### 入力検証の限界
 
-### Limits of Input Validation
+**複雑な入力形式では「検証が正則」であってもまだ危険な場合があるので、入力値検証が必ずしもデータを「安全」にする訳ではありません。例えば、正則なemailアドレスはSQLインジェクションとなり得ますし、正則なURLはXSS攻撃となり得ます。**入力値検証に加えて、クエリーパラメータ化やエスケーピングなどの追加防御策を常にしましょう。
 
-**Input validation does not always make data "safe" since certain forms of complex input may be "valid" but still dangerous. For example a valid email address may contain a SQL injection attack or a valid URL may contain a Cross Site Scripting attack**. Additional defenses besides input validation should always be applied to data such as query parameterization or escaping.
+### シリアルデータの検証の課題
 
-### Challenges of Validating Serialized Data
-Some forms of input are so complex that validation can only minimally protect the application. For example, it's dangerous to deserialize untrusted data or data that can be manipulated by an attacker. The only safe architectural pattern is to not accept serialized objects from untrusted sources or to only deserialize in limited capacity for only simple data types. You should avoid processing serialized data formats and use easier to defend formats such as JSON when possible.
+複雑に過ぎてアプリケーションを最低限にしか保護できない入力形式があります。例えば、攻撃者に調整されている可能性があるような信頼できないデータをデシリアライズすることは危険です。唯一の安全なアーキテクチャパターンは、信頼できないソースからのシリアルデータを受け入れないか、単純なデータ形式のみに対し制限された容量の下でデシリアライズをすることです。可能な限りシリアルデータ処理を避け、JSONのように防御しやすい形式を利用しましょう。
 
-If that is not possible then consider a series of validation defenses when processing serialized data.
-* Implement integrity checks or encryption of the serialized objects to prevent hostile object creation or data tampering.
-* Enforce strict type constraints during deserialization before object creation; typically code is expecting a definable set of classes. Bypasses to this technique have been demonstrated.
-* Isolate code that deserializes, such that it runs in very low privilege environments, such as temporary containers.
-* Log security deserialization exceptions and failures, such as where the incoming type is not the expected type, or the deserialization throws exceptions.
-* Restrict or monitor incoming and outgoing network connectivity from containers or servers that deserialize.
-* Monitor deserialization, alerting if a user deserializes constantly.
+もしシリアルデータ処理が避けられないのであれば、一連の検証による防御を考えに入れてください。
 
+* 悪意のあるオブジェクトの作成やデータ改竄の防止のために、完全性の確認やシリアルデータを暗号化して下さい。
+* オブジェクト作成前のデシリアライズ時に厳格な型制約を適用して下さい。一般的なコードはクラスの集合として定義されることを期待しています。この技術には回避手段が発表されています。
+* デシリアライズ処理は、一時的なコンテナなど非常に低い権限環境で実行するなど、隔離して下さい。
+* 期待外の型が入力された場合やデシリアライズ処理で例外がスローされた場合など、デシリアライズ処理の例外や失敗をセキュリティログに保存して下さい。
+* デシリアライズするコンテナやサーバーのネットワーク入出力を制限し、また監視して下さい。
+* ユーザーが継続的にデシリアライズ処理を行っている場合にはアラートを発して、監視して下さい。
 
-### Unexpected User Input (Mass Assignment)
-Some frameworks support automatic binding of HTTP requests parameters to server-side objects used by the application. This auto-binding feature can allow an attacker to update server-side objects that were not meant to be modified. The attacker can possibly modify their access control level or circumvent the intended business logic of the application with this feature.
+### 期待していないユーザー入力 (大量アサインメント)
 
-This attack has a number of names including: mass assignment, autobinding and object injection.
+HTTPリクエストのパラメーターをサーバーサイドのアプリケーションで利用中のオブジェクトに自動バインドするフレームワークがあります。変更を想定されていないサーバーサイドのオブジェクトを攻撃者がこの自動バインド機能を利用して変更できます。この機能によって攻撃者は自身のアクセス制御レベルを変更したり、想定されたビジネスロジックの回避することが可能となります。
 
-As a simple example, if the user object has a field privilege which specifies the user's privilege level in the application, a malicious user can look for pages where user data is modified and add privilege=admin to the HTTP parameters sent.  If auto-binding is enabled in an insecure fashion, the server-side object representing the user will be modified accordingly.
+この攻撃手法には大量アサインメントであったり、自動バインディングであったり、オブジェクトインジェクションであったり、多くの名前が付けられています。
 
-Two approaches can be used to handle this:
-* Avoid binding input directly and use Data Transfer Objects (DTOs) instead.
-* Enable auto-binding but set up whitelist rules for each page or feature to define which fields are allowed to be auto-bound.
+ユーザーオブジェクトに privilege フィールドでアプリケーションの特権レベルを持っており、悪意のあるユーザーがユーザーデータが変更されるページを探し出し、送信HTTPパラメーターに privilege=admin を追加することができる単純な例を考えます。不安全にも自動バインディングが有効であれば、サーバーサイドのユーザーオブジェクトはその通りに変更されてしまいます。
 
-More examples are available in the [OWASP Mass Assignment Cheat Sheet](https://www.owasp.org/index.php/Mass_Assignment_Cheat_Sheet).
+これの制御には2つのアプローチがとれます。
 
-### Validating and Sanitizing HTML
-Consider an application that needs to accept HTML from users (via a WYSIWYG editor that represents content as HTML or features that directly accept HTML in input). In this situation validation or escaping will not help.
+* 直接的な入力のバインドを避け、その代わりにデータ転送オブジェクト(DTOs)を使います。
+* 自動バインドを有効化したとしても、各ページや機能において自動バインド可能なフィールドのホワイトリストを用意します。
 
-* Regular expressions are not expressive enough to understand the complexity of HTML5.
-* Encoding or escaping HTML will not help since it will cause the HTML to not render properly.
+より多くの例が[OWASP Mass Assignment Cheat Sheet](https://www.owasp.org/index.php/Mass_Assignment_Cheat_Sheet)にあります。
 
-Therefore, you need a library that can parse and clean HTML formatted text. Please see the [XSS Prevention Cheat Sheet on HTML Sanitization](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#RULE_.236_-_Sanitize_HTML_Markup_with_a_Library_Designed_for_the_Job) for more information on HTML Sanitization.
+### HTMLの検証と無毒化
 
-### Validation Functionality in Libraries and Frameworks
-All languages and most frameworks provide validation libraries or functions which should be leveraged to validate data. Validation libraries typically cover common data types, length requirements, integer ranges, "is null" checks and more. Many validation libraries and frameworks allow you to define your own regular expression or logic for custom validation in a way that allows the programmer to leverage that functionality throughout your application. Examples of validation functionality include PHP’s [filter functions](https://secure.php.net/manual/en/filter.examples.validation.php) or the [Hibernate Validator](http://hibernate.org/validator/) for Java. Examples of HTML Sanitizers include [Ruby on Rails sanitize method](http://edgeapi.rubyonrails.org/classes/ActionView/Helpers/SanitizeHelper.html), [OWASP Java HTML Sanitizer](https://www.owasp.org/index.php/OWASP_Java_HTML_Sanitizer_Project) or [DOMPurify](https://github.com/cure53/DOMPurify).
+(HTMLコンテンツのWYSIWYGエディタや、HTML直接入力機能を介して)ユーザーからのHTML入力を受け付けるアプリケーションについて考えてみましょう。この場合、検証やエスケーピングは役に立ちません。
 
-## Vulnerabilities Prevented
-* Input validation reduces the attack surface of applications and can sometimes make attacks more difficult against an application.
-* Input validation is a technique that provides security to certain forms of data, specific to certain attacks and cannot be reliably applied as a general security rule.
-* Input validation should not be used as the primary method of preventing [XSS](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet), [SQL Injection](https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet) and other attacks.
+* 正規表現はHTML5の複雑性を解釈するのに十分な表現力がありません。
+* エンコーディングやエスケーピングでは、HTMLを正しく表示できないので役に立ちません。
 
-## References
+そのため、HTMLテキストをパースし綺麗にするライブラリが必要となります。HTML無毒化については[XSS Prevention Cheat Sheet on HTML Sanitization](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#RULE_.236_-_Sanitize_HTML_Markup_with_a_Library_Designed_for_the_Job)をご覧下さい。
+
+### 検証用のライブラリやフレームワーク
+
+全ての言語や殆どのフレームワークでは、データ検証で利用できるように検証用のライブラリーや関数を用意しています。検証ライブラリーは大抵は標準的なデータ型、長さ要件、値域、nullチェックその他もろもろをカバーしています。多くの検証用ライブラリーやフレームワークでは、プログラマーがアプリケーション全体で利用できるように、独自の正規表現やカスタムバリデーションロジックを定義できます。検証機能の例として、PHPの[filter functions](https://secure.php.net/manual/en/filter.examples.validation.php)やJavaの[Hibernate Validator](http://hibernate.org/validator/)があります。HTML無毒化の例として、[Ruby on Rails sanitize method](http://edgeapi.rubyonrails.org/classes/ActionView/Helpers/SanitizeHelper.html)や[OWASP Java HTML Sanitizer](https://www.owasp.org/index.php/OWASP_Java_HTML_Sanitizer_Project)、[DOMPurify](https://github.com/cure53/DOMPurify)があります。
+
+## 本対策で防げる脆弱性
+
+* 入力検証はアプリケーションへの攻撃を減少させたり、時には難しくしたりします。
+* 入力検証はある種の攻撃に特有なデータ形式について安全を確保する技術であり、広範なセキュリティルールとして用いる事はできません。
+* 入力値検証は[XSS](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet)や[SQL Injection](https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet)、その他の攻撃への主要な対策として用いてはなりません。
+
+## 参考文献
+
 * [OWASP Cheat Sheet: Input Validation](https://www.owasp.org/index.php/Input_Validation_Cheat_Sheet)
 * [OWASP Cheat Sheet: iOS - Security Decisions via Untrusted Inputs](https://www.owasp.org/index.php/IOS_Developer_Cheat_Sheet#Security_Decisions_via_Untrusted_Inputs_.28M7.29)
 * [OWASP Testing Guide: Testing for Input Validation](https://www.owasp.org/index.php/Testing_for_Input_Validation)
 
-## Tools
+## ツール
+
 * [OWASP Java HTML Sanitizer Project](https://www.owasp.org/index.php/OWASP_Java_HTML_Sanitizer)
 * [Java JSR-303/JSR-349 Bean Validation](http://beanvalidation.org/)
 * [Java Hibernate Validator](http://hibernate.org/validator/)

@@ -7,7 +7,7 @@ order: 5
 
 ---
 
-# C1: セキュリティ要件を定義する
+# C1: セキュリティ要件の定義
 
 ## 概要
 
@@ -34,32 +34,37 @@ ASVSの要件はその検証となる命令文の基礎であり、ユーザー�
 
 ユーザーストーリーは、システムのユーザー、管理者、攻撃者からの視点に注目し、ユーザーがシステムに何をして欲しいかに基づいて機能を説明します。ユーザーストーリーは「ユーザーは、xと、y、zを行えます」という形をとります。
 
-    As a user, I can enter my username and password to gain access to the application.
-    As a user, I can enter a long password that has a maximum of 1023 characters.
+    ユーザーは、ユーザー名とパスワードを入力して、アプリケーションにアクセスできます。
+    ユーザーは、最大1023文字の長いパスワードを設定できます。
 
-When the story is focused on the attacker and their actions, it is referred to as a misuse case.
+攻撃者とその行動に注目した場合、誤用事例とよびます。
 
-    As an attacker, I can enter in a default username and password to gain access.
-    
+    攻撃者は、デフォルトユーザー名とパスワードを入力して、アプリケーションにアクセスできます。
 
-This story contains the same message as the traditional requirement from ASVS, with additional user or attacker details to help make the requirement more testable.
+このストーリーは従来のASVSに記された要件を含んでおり、ユーザーや攻撃者の詳細の追加によってよりテストしやすい形になっています。
 
-## Implementation
-Successful use of security requirements involves four steps. The process includes discovering / selecting, documenting, implementing, and then confirming correct implementation of new security features and functionality within an application. 
+## 実装
 
-### Discovery and Selection
-The process begins with discovery and selection of security requirements. In this phase, the developer is understanding security requirements from a standard source such as ASVS and choosing which requirements to include for a given release of an application. The point of discovery and selection is to choose a manageable number of security requirements for this release or sprint, and then continue to iterate for each sprint, adding more security functionality over time.
+セキュリティ要件の上手い使い方には、4段階あります。この手法とは発見・選択・文書化・実装であり、新しいセキュリティ概念や機能がアプリケーション内で正しく実装されているかの確認となります。
 
-### Investigation and Documentation
-During investigation and documentation, the developer reviews the existing application against the new set of security requirements to determine whether the application currently meets the requirement or if some development is required. This investigation culminates in the documentation of the results of the review.
+### 発見・選択
 
-### Implementation and Test
-After the need is determined for development, the developer must now modify the application in some way to add the new functionality or eliminate an insecure option. In this phase the developer first determines the design required to address the requirement, and then completes the code changes to meet the requirement. Test cases should be created to confirm the existence of the new functionality or disprove the existence of a previously insecure option.
+この手法は、セキュリティ要件の発見と選択から始まります。この段階では、開発者はASVSの様な標準的情報源からセキュリティ要件を理解し、特定のアプリケーションリリースに盛り込む要件を選択します。発見と選択における重要な点は、リリースやスプリントではセキュリティ要件を管理できる数のみ選択し、それを各スプリント繰り返し、時間を掛けてより多くのセキュリティ機能を追加することです。
 
-## Vulnerabilities Prevented
-Security requirements define the security functionality of an application. Better security built in from the beginning of an applications life cycle results in the prevention of many types of vulnerabilities. 
+### 調査・文書化
 
-## References
+調査と文書化の段階では、開発者は新たなセキュリティ要件のセットに対しアプリケーションが要件を満足するか、あるいは何らかの開発が必要かを判断するために、既存アプリケーションをレビューをします。この調査はレビュー結果の文書として結実します。
+
+### 実装・試験
+
+開発の必要性が決定された後、開発者は新機能の追加や安全でないオプションの削除のために、何らかの方法でアプリケーションを修正しなくてはなりません。この段階では開発者は最初に要件に対応するための必要な設計をし、要件を満足するコード変更を終わらせます。新機能の追加や安全でないオプションの削除を確認するために、テストケースを作りましょう。
+
+## 本対策で防げる脆弱性
+
+セキュリティ要件はアプリケーションのセキュリティ機能を定めます。アプリケーションのライフサイクルの初めからよりよいセキュリティを組み込めば、多くの種類の脆弱性を防ぐ事につながります。
+
+## 参考
+
 * [OWASP Application Security Verification Standard (ASVS)](https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project)
 * [OWASP Mobile Application Security Verification Standard (MASVS)](https://github.com/OWASP/owasp-masvs)
 * [OWASP Top Ten](https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project)

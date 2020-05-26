@@ -7,47 +7,54 @@ order: 7
 
 ---
 
-# C3: Secure Database Access
+# C3: データベースへの安全なアクセス
 
-## Description
-This section describes secure access to all data stores, including both relational databases and NoSQL databases. Some areas to consider:
+## 概要
 
-1. Secure queries
-2. Secure configuration
-3. Secure authentication
-4. Secure communication
+この節はリレーショナルデータベースとNoSQLの両方を含む、全てのデータストアへの安全なアクセスについての説明です。検討すべき領域は幾つかあります
 
-### Secure Queries
-SQL Injection occurs when untrusted user input is dynamically added to a SQL query in an insecure manner, often via basic string concatenation. SQL Injection is one of the most dangerous application security risks. SQL Injection is easy to exploit and could lead to the entire database being stolen, wiped, or modified. The application can even be used to run dangerous commands against the operating system hosting your database, thereby giving an attacker a foothold on your network.
+1. 安全なクエリー
+2. 安全な設定
+3. 安全な認証
+4. 安全な通信
 
-In order to mitigate SQL injection, untrusted input should be prevented from being interpreted as part of a SQL command. The best way to do this is with the programming technique known as 'Query Parameterization'. This defense should be applied to SQL, OQL, as well as stored procedure construction.
+### 安全なクエリー
 
-A good list of query parameterization examples in ASP, ColdFusion, C#, Delphi, .NET, Go, Java, Perl, PHP, PL/SQL, PostgreSQL, Python, R, Ruby and Scheme can be found at [http://bobby-tables.com](http://bobby-tables.com/) and the [OWASP Cheat Sheet on Query Parameterization](https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet).
+SQLインジェクションは、信頼できないユーザー入力が、よくある単純な文字列結合など安全でないSQLクエリーに動的に追加される場合に発生します。SQLインジェクションはアプリケーションセキュリティリスクのなかでも最も危険なものの一つです。SQLインジェクションは簡単に悪用され、全データベースが盗まれたり、削除されたり、変更されたりしかねません。このアプリケーションはデータベースをホストするOSへ危険なコマンドを実行できる場合もあり、そうなれば攻撃者にとってネットワーク上での足ががりとなります。
 
-**Caution on Query Parameterization**
+SQLインジェクションの軽減には、信頼できないユーザー入力がSQLコマンドの一部として解釈されるのを防がなくてはなりません。その為の最善の方法は「クエリーパラメーター化」として知られているプログラミング技術です。この防御策はSQL、OQL、ストアドプロシジャーの構築で適用すべきです。
 
-Certain locations in a database query are not parameterizable. These locations are different for each database vendor. Be certain to do very careful exact-match validation or manual escaping when confronting database query parameters that cannot be bound to a parameterized query. Also, while the use of parameterized queries largely has a positive impact on performance, certain parameterized queries in specific database implementations will affect performance negatively. Be sure to test queries for performance; especially complex queries with extensive like clause or text searching capabilities.
+ASP、ColdFusion、C#、Delphi、.NET、Go、Java、Perl、PHP、PL/SQL、PostgreSQL、Python、R、Ruby、Schemeにおけるクエリーパラメータ化の例の良いリストが、[http://bobby-tables.com](http://bobby-tables.com/) や [OWASP Cheat Sheet on Query Parameterization](https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet) で見つかるでしょう。
 
-### Secure Configuration
-Unfortunately, database management systems do not always ship in a "secure by default" configuration. Care must be taken to ensure that the security controls available from the Database Management System (DBMS) and hosting platform are enabled and properly configured. There are standards, guides, and benchmarks available for most common DBMS. 
+**クエリーパラメータ化の注意**
 
-A quick guidance on providing a secure configuration can be found in the [Database Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#database-configuration-and-hardening).
+データベースクエリーの中には、パラメーター化できない場所があります。これらの場所はデータベースベンダー毎に異なります。データベスクエリーのパラメーターがパラメーター化クエリーにバインドできない場合には、完全一致や手動エスケープを慎重に行って下さい。また、大抵のパラメーター化クエリーはパフォーマンスに改善をもたらしますが、あるデータベース実装における特定のパラメーター化クエリーは悪影響となります。クエリーをテストしてパフォーマンスを確認して下さい。特に、広範囲のlike節やテキスト検索機能のように、複雑なクエリーは要注意です。
 
-### Secure Authentication
-All access to the database should be properly authenticated. Authentication to the DBMS should be accomplished in a secure manner. Authentication should take place only over a secure channel. Credentials must be properly secured and available for use.
+### 安全な設定
 
-A quick guidance on providing a secure authentication process can be found in the [Database Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#authentication).
+残念なことに、データベース管理システム(DBMS)は「デフォルトで安全」という設定で出荷されている訳ではありません。DBMSとホスティングプラットフォームから利用可能なセキュリティコントロールが有効になっており、適切に設定されていることを確認するために、注意して下さい。殆どの標準的なDBMSでは標準、ガイド、ベンチマークがよういされています。
 
-### Secure Communication
-Most DBMS support a variety of communications methods (services, APIs, etc) - secure (authenticated, encrypted) and insecure (unauthenticated or unencrypted). It is a good practice to only use the secure communications options per the *Protect Data Everywhere* control.
+安全な設定のための簡単ガイダンスが[Database Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#database-configuration-and-hardening)にあります。
 
-A quick guidance on providing a secure communication mean can be found in the [Database Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#connecting-to-the-database).
+### 安全な認証
 
-## Vulnerabilities Prevented
+データベースへの全てのアクセスを適切に認証しましょう。DBMSへの認証を安全な方法で行いましょう。安全なチャンネルのみを通じて認証しましょう。資格情報は適切に保護され、使用可能な状態になければなりません。
+
+安全な認証のための簡単ガイダンスが[Database Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#authentication)にあります。
+
+### 安全な通信
+
+殆どのDBMSでは様々な通信方法(サービス、API, 他)をサポートしており、安全な(認証され暗号化された)ものと、安全でない(認証されず、暗号化されてもない)ものとあります。*全ての場所でデータを保護せよ*の対策に則り、安全な通信のみを用いる事がよいです。
+
+安全な通信のための簡単ガイダンスが[Database Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#connecting-to-the-database)にあります。
+
+## 本対策で防げる脆弱性
+
 * [OWASP Top 10 2017- A1: Injection](https://www.owasp.org/index.php/Top_10-2017_A1-Injection)
 * [OWASP Mobile Top 10 2014-M1 Weak Server Side Controls](https://www.owasp.org/index.php/Mobile_Top_10_2014-M1)
 
-## References
+## 参考文献
+
 * [OWASP Cheat Sheet: Query Parameterization](https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet)
 * [OWASP Cheat Sheet: Database Security](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html)
 * [Bobby Tables: A guide to preventing SQL injection](http://bobby-tables.com/)
