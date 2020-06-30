@@ -17,7 +17,7 @@ order: 10
 
 ## 認証レベル
 
-NIST 800-63bには、認証保証レベル(AAL)と呼ばれる認証保証の3つのレベルが記されています。AALレベル1では個人を特定できる情報(Personally Identifiable Information = PII)やその他のプライベート情報を含まない低リスクのアプリケーション用に予約されています。AALレベル1では、一般的にはパスワードによる単一要素認証しか要求されません。
+NIST 800-63bには、認証保証レベル(AAL)と呼ばれる認証保証の3つのレベルが記されています。AALレベル1では個人を特定できる情報(Personally Identifiable Information = PII)やその他のプライベート情報を含まない低リスクのアプリケーション用に当てられています。AALレベル1では、一般的にはパスワードによる単一要素認証しか要求されません。
 
 ### レベル 1 : パスワード
 
@@ -25,51 +25,58 @@ NIST 800-63bには、認証保証レベル(AAL)と呼ばれる認証保証の3�
 
 #### パスワード要件
 
-Passwords should comply with the following requirements at the very least:
+パスワードは少なくとも次の要件を満たさねばなりません。
 
-* be at least 8 characters in length if multi-factor authentication (MFA) and other controls are also used. If MFA is not possible, this should be increased to at least 10 characters
-* all printing ASCII characters as well as the space character should be acceptable in memorized secrets
-* encourage the use of long passwords and passphrases
-* remove complexity requirements as these have been found to be of limited effectiveness. Instead, the adoption of MFA or longer password lengths is recommended
-* ensure that passwords used are not commonly used passwords that have been already been leaked in a previous compromise.  You may choose to block the top 1000 or 10000 most common passwords which meet the above length requirements and are found in compromised password lists. The following link contains the most commonly found passwords: https://github.com/danielmiessler/SecLists/tree/master/Passwords.
+* 多要素認証(MFA)やその他の管理がある際には少なくとも8文字以上の長さとします。MFAが使えない場合には10文字以上に増やしましょう。
+* 保存する鍵には空白を含む全ての印字可能アスキー文字を使えるようしましょう。
+* 長いパスワードやパスフレーズを推奨します。
+* 複雑性に付いての要件は効果が限定的であることが知られているため、含めてはなりません。代替としてはMFAや、より長いパスワード長を推奨します。
+* パスワードが過去の事件で既に漏洩した良く知られているパスワードでない事を確認します。漏洩したパスワードリストのよく使われるパスワード上位1,000あるいは10,000のうち、先述のパスワード長を満たすものをブロックするのが良いです。最も頻繁に使われているパスワードのリストは次のリンクから得られます。<https://github.com/danielmiessler/SecLists/tree/master/Passwords>
 
-#### Implement Secure Password Recovery Mechanism
-It is common for an application to have a mechanism for a user to gain access to their account in the event they forget their password. A good design workflow for a password recovery feature will use multi-factor authentication elements. For example, it may ask a security question - something they know, and then send a generated token to a device - something they own.
+#### 安全なパスワード復旧機構の実装
 
-Please see the [Forgot_Password_Cheat_Sheet](https://www.owasp.org/index.php/Forgot_Password_Cheat_Sheet) and [Choosing_and_Using_Security_Questions_Cheat_Sheet](https://www.owasp.org/index.php/Choosing_and_Using_Security_Questions_Cheat_Sheet) for further details.
+アプリケーションの良くある機構に、ユーザーがパスワードを忘れた際でもアカウントにアクセスできるようする仕組みがあります。パスワード復旧機能の良い設計ワークフローとして、MFAが使えます。例えば知識要素たるセキュリティ質問をし、生成されたトークンを所持要素たるデバイスに送信します。
 
-#### Implement Secure Password Storage
-In order to provide strong authentication controls, an application must securely store user credentials. Furthermore, cryptographic controls should be in place such that if a credential (e.g., a password) is compromised, the attacker does not immediately have access to this information.
+[Forgot_Password_Cheat_Sheet](https://www.owasp.org/index.php/Forgot_Password_Cheat_Sheet) を見て、 [Choosing_and_Using_Security_Questions_Cheat_Sheet](https://www.owasp.org/index.php/Choosing_and_Using_Security_Questions_Cheat_Sheet) にて更なる詳細を確認します。
 
-**PHP Example for Password Storage**
+#### 安全なパスワード保存の実装
 
-Below is an example for secure password hashing in PHP using `password_hash()` function (available since 5.5.0) which defaults to using the bcrypt algorithm. The example uses a work factor of 15.
+強力な認証管理の提供のためには、アプリケーションはユーザークレデンシャルを安全に保管せねばなりません。加えて、仮にクレデンシャル(例えばパスワード)が漏洩したとしても直ちにこの情報が攻撃者に渡らぬように、暗号化による制御をしましょう。
 
+**パスワード保存のPHPにおける例**
 
+次のPHPの`password_hash()`(5.5.0から利用可能)を利用した安全なパスワードハッシュの例です。この関数はデフォルトでbcryptアルゴリズムを利用します。作業計数は15を使っています。
+
+```php
     <?php
-     $cost = 15;
-     $password_hash = password_hash("secret_password", PASSWORD_DEFAULT, ["cost" => $cost] ); 
+        $cost = 15;
+        $password_hash = password_hash("secret_password", PASSWORD_DEFAULT, ["cost" => $cost] ); 
     ?>
+```
 
-Please see the [OWASP Password Storage Cheat Sheet](https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet) for further details.
+詳細については [OWASP Password Storage Cheat Sheet](https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet) をご覧下さい。
 
-### Level 2 : Multi-Factor Authentication
-NIST 800-63b AAL level 2 is reserved for higher-risk applications that contain "self-asserted PII or other personal information made available online." At AAL level 2 multi-factor authentication is required including OTP or other forms of multi-factor implementation.
+### レベル 2 : 多要素認証(MFA)
 
-Multi-factor authentication (MFA) ensures that users are who they claim to be by requiring them to identify themselves with a combination of:
-* Something you know – password or PIN
-* Something you own – token or phone
-* Something you are – biometrics, such as a fingerprint
+NIST 800-63b AALレベル2は、「自己申告されたPIIやオンラインで利用可能なその他の個人情報」を含む高リスクアプリケーション用に当てられています。AALレベル2では、ワンタイムパスワード(OTP)やその他の形式の多要素認証が必要となります。
 
-Using passwords as a sole factor provides weak security. Multi-factor solutions provide a more robust solution by requiring an attacker to acquire more than one element to authenticate with the service.
+MFAは、ユーザーが自身の主張通りの人物である識別のために、次の組み合わせを用いて確認します。
 
-It is worth noting that biometrics, when employed as a single factor of authentication, are not considered acceptable secrets for digital authentication. They can be obtained online or by taking a picture of someone with a camera phone (e.g., facial images) with or without their knowledge, lifted from objects someone touches (e.g., latent fingerprints), or captured with high resolution images (e.g., iris patterns). Biometrics must be used only as part of multi-factor authentication with a physical authenticator (something you own). For example, accessing a multi-factor one-time password (OTP) device that will generate a one-time password that the user manually enters for the verifier.
+* 知識要素 - パスワードや個人識別番号(Personal Identification Number = PIN)
+* 所持要素 - トークンデバイスや電話
+* 生体要素 - 指紋などの生体情報
 
-### Level 3 : Cryptographic Based Authentication
-NIST 800-63b Authentication Assurance Level 3 (AAL3) is required when the impact of compromised systems could lead to personal harm, significant financial loss, harm the public interest or involve civil or criminal violations. AAL3 requires authentication that is "based on proof of possession of a key through a cryptographic protocol." This type of authentication is used to achieve the strongest level of authentication assurance. This is typically done though hardware cryptographic modules.
+単独の要素として利用されるパスワードのセキュリティは脆弱です。多要素認証では攻撃者がサービスでの認証の際に複数の要素を求めるため、強固なソリューションとなります。
 
-#### Session Management
-Once the initial successful user authentication has taken place, an application may choose to track and maintain this authentication state for a limited amount of time. This will allow the user to continue using the application without having to keep re-authentication with each request. Tracking of this user state is called Session Management. 
+生体情報の注意点として、認証の単一要素としての利用下では、デジタル認証における秘密情報としては許容されないことです。これらはオンラインからであったり、カメラ付き携帯電話での撮影(顔画像など)だったり、人が触った物からの採取(残留指紋など)だったり、高解像度画像(光彩模様など)だったり、から当人の自覚無く入手可能です。生体情報は物理的な認証装置(所有要素)における多要素認証の一要素としてのみしか、利用できません。例えば、ユーザーがMFA用OTP生成器に手動入力して、デバイスにアクセスできるかを確認します。
+
+### レベル 3 : 暗号ベース認証
+
+NIST 800-63b AALレベル3は漏洩したシステムが個人への危害、高額の金銭的損失、公益の毀損、あるいは民事・刑事上の違反を招く恐れのある場合に当てられています。AALレベル3は「暗号化プロトコルを介する鍵の所有証明に基づく」認証が必要です。このタイプの認証は、最強の認証保証の実現のために、使われています。一般的にはハードウェア暗号化モジュールにより、これを実現します。
+
+#### セッション管理
+
+一度ユーザー認証した後は、アプリケーションは一定の時間制限の下で認証状態を追跡し、維持する様にもできます。これにより、ユーザーはリクエストの度に再認証すること無く、アプリケーションを継続利用できます。このユーザー認証の追跡のことをセッション管理と呼びます。
 
 #### Session Generation and Expiration
 User state is tracked in a session. This session is typically stored on the server for traditional web based session management. A session identifier is then given to the user so the user can identify which server-side session contains the correct user data. The client only needs to maintain this session identifier, which also keeps sensitive server-side session data off of the client.
